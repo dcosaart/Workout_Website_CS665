@@ -1,13 +1,16 @@
-from flask import render_template, request, redirect
-from app import app
+from flask import Blueprint, render_template, request, redirect
 from models import db, User
 
-@app.route("/")
+main = Blueprint("main", __name__)
+
+print("ROUTES LOADED")
+
+@main.route("/")
 def index():
     users = User.query.all()
     return render_template("index.html", users=users)
 
-@app.route("/add", methods=["POST"])
+@main.route("/add", methods=["POST"])
 def add_user():
     name = request.form["name"]
 

@@ -4,17 +4,12 @@
     <title>App</title>
 </head>
 <body>
-    <h1>Users</h1>
+    <h1>Welcome to the workout tracker app!</h1>
 
-    <form method="POST" action="/add">
-        <input type="text" name="name" required>
-        <button type="submit">Add</button>
-    </form>
-
-    <ul>
-        {% for user in users %}
-        <li>{{ user.name }}</li>
-        {% endfor %}
-    </ul>
+    <button onclick="window.location.href='/workouts'">View Workouts</button>
+    <button onclick="window.location.href='/signUp'">Sign up</button>
+    <button onclick="window.location.href='/users'">View Users</button>
+    <button onclick="window.location.href='/plans'">View Plans</button>  
+    <button onload="window.location.href='/login'"> Log IN</button>
 </body>
 </html>
