@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect
-from models import db, User
+from models import db, User, Plan
 
 main = Blueprint("main", __name__)
 
@@ -22,3 +22,13 @@ def add_user():
     db.session.commit()
 
     return redirect("/")
+
+@main.route("/users", methods=["GET"])
+def get_users():
+    users = User.query.all()
+    return render_template("users.html", users=users)
+
+@main.route("/plans", methods=["GET"])
+def get_plans():
+    plans = Plan.query.all()
+    return render_template("plans.html", plans=plans)
