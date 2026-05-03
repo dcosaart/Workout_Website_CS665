@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Workouts</title>
+</head>
+<body>
+    <h1>All Workouts</h1>
+
+    {% if workouts %}
+    <table border="1" cellpadding="8" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Workout ID</th>
+                <th>User ID</th>
+                <th>Plan ID</th>
+                <th>Workout Date</th>
+                <th>Duration</th>
+                <th>Calories</th>
+                <th>Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for w in workouts %}
+            <tr>
+                <td>{{ w.workout_id}}</td>
+                <td>{{ w.user_id }}</td>
+                <td>{{ w.plan_id }}</td>
+                <td>{{ w.workout_date }}</td>
+                <td>{{ w.duration_min }}</td>
+                <td>{{ w.cals_burned}}</td>
+                <td>{{ w.notes }}</td>
+        
+
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No plans found in the database</p>
+    {% endif %}
+</body>
+</html>
