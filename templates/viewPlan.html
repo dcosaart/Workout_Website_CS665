@@ -6,33 +6,70 @@
     <title>Plans</title>
 </head>
 <body>
-    <h1>All Plans</h1>
+    <h1>Plan</h1>
 
     {% if plan%}
+    <form action="{{ url_for('main.view_plan', plan_id=plan.plan_id) }}" method="POST">
+        <table border="1" cellpadding="8" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Plan ID</th>
+                    <th>User ID</th>
+                    <th>Name</th>
+                    <th>Goal</th>
+                    <th>Description</th>
+                    <th>Start Date</th>
+                    <th>End Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ plan.plan_id }}</td>
+                    <td>{{ plan.user_id }}</td>
+                    <td><input value="{{ plan.name }}" name="name" /></td>
+                    <td><input value=" {{ plan.goal }}" name="goal" /></td>
+                    <td><input value="{{ plan.description or 'No desc.'}}" name="description" /></td>
+                    <td><input value="{{ plan.start_date or 'No Start Date' }}" name="start_date" /></td>
+                    <td><input value="{{ plan.end_date or 'No End Date' }}" name="end_date" /></td>
+                </tr>
+            </tbody>
+        </table>
+        <button type="submit">Update Plan</button>
+    </form>
+    <h2> Workouts for this Plan</h2>
+    {% if workouts %}
     <table border="1" cellpadding="8" cellspacing="0">
         <thead>
             <tr>
-                <th>Plan ID</th>
+                <th>Workout ID</th>
                 <th>User ID</th>
-                <th>Name</th>
-                <th>Goal</th>
-                <th>Description</th>
-                <th>Start Date</th>
-                <th>End Date</th>
+                <th>Plan ID</th>
+                <th>Workout Date</th>
+                <th>Duration</th>
+                <th>Calories</th>
+                <th>Notes</th>
             </tr>
         </thead>
         <tbody>
+            {% for w in workouts %}
             <tr>
-                <td>{{ plan.plan_id }}</td>
-                <td>{{ plan.user_id }}</td>
-                <td>{{ plan.name }}</td>
-                <td>{{ plan.goal }}</td>
-                <td>{{ plan.description or 'No desc.'}}</td>
-                <td> {{ plan.start_date or 'No Start Date' }}</td>
-                <td> {{ plan.end_date or 'No End Date' }}</td>
+                <td>{{ w.workout_id}}</td>
+                <td>{{ w.user_id }}</td>
+                <td>{{ w.plan_id }}</td>
+                <td>{{ w.workout_date }}</td>
+                <td>{{ w.duration_min }}</td>
+                <td>{{ w.cals_burned}}</td>
+                <td>{{ w.notes }}</td>
             </tr>
+            {% endfor %}
         </tbody>
     </table>
+
+
+
+    {% else %}
+    <p>No workouts found for this plan</p>
+    {% endif %}
     {% else %}
     <p>Plan Cannot be Found</p>
     {% endif %}
