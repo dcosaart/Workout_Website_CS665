@@ -36,34 +36,36 @@
         </table>
         <button type="submit">Update Plan</button>
     </form>
-    <h2> Workouts for this Plan</h2>
+    <h2>Workouts for this Plan</h2>
     {% if workouts %}
-    <table border="1" cellpadding="8" cellspacing="0">
-        <thead>
-            <tr>
-                <th>Workout ID</th>
-                <th>User ID</th>
-                <th>Plan ID</th>
-                <th>Workout Date</th>
-                <th>Duration</th>
-                <th>Calories</th>
-                <th>Notes</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for w in workouts %}
-            <tr>
-                <td>{{ w.workout_id}}</td>
-                <td>{{ w.user_id }}</td>
-                <td>{{ w.plan_id }}</td>
-                <td>{{ w.workout_date }}</td>
-                <td>{{ w.duration_min }}</td>
-                <td>{{ w.cals_burned}}</td>
-                <td>{{ w.notes }}</td>
-            </tr>
+        {% for w in workouts %}
+        <div style="margin-left: 30px; margin-top: 12px; padding-left: 12px; border-left: 3px solid #bbb;">
+            <h3>Workout {{ w.workout_id }}</h3>
+            <p><strong>User ID:</strong> {{ w.user_id }}</p>
+            <p><strong>Plan ID:</strong> {{ w.plan_id }}</p>
+            <p><strong>Workout Date:</strong> {{ w.workout_date or 'No Date' }}</p>
+            <p><strong>Duration:</strong> {{ w.duration_min or 0 }} minutes</p>
+            <p><strong>Calories:</strong> {{ w.cals_burned or 0 }}</p>
+            <p><strong>Notes:</strong> {{ w.notes or 'No notes' }}</p>
+
+            {% if w.workout_exercises %}
+                {% for workout_exercise in w.workout_exercises %}
+                <div style="margin-left: 30px; margin-top: 10px; padding-left: 12px; border-left: 3px solid #ddd;">
+                    <h4>{{ workout_exercise.exercise.name }}</h4>
+                    <p><strong>Exercise ID:</strong> {{ workout_exercise.exercise.exercise_id }}</p>
+                    <p><strong>Muscle Group:</strong> {{ workout_exercise.exercise.muscle_group or 'Not listed' }}</p>
+                    <p><strong>Difficulty:</strong> {{ workout_exercise.exercise.difficulty }}</p>
+                    <p><strong>Equipment:</strong> {{ workout_exercise.exercise.equipment_needed or 'None' }}</p>
+                    <p><strong>Sets:</strong> {{ workout_exercise.sets_completed or 'N/A' }}</p>
+                    <p><strong>Reps:</strong> {{ workout_exercise.reps_completed or 'N/A' }}</p>
+                    <p><strong>Average Weight:</strong> {{ workout_exercise.average_weight or 'N/A' }}</p>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p style="margin-left: 30px;">No exercises found for this workout.</p>
+            {% endif %}
+        </div>
             {% endfor %}
-        </tbody>
-    </table>
 
 
 

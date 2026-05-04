@@ -87,13 +87,7 @@ def view_plan(plan_id):
   
 
     plan = Plan.query.get(plan_id)
-    workouts = (
-        db.session.query(Workout, WorkoutExercise, Exercise)
-        .join(WorkoutExercise, Workout.workout_id == WorkoutExercise.workout_id)
-        .join(Exercise, WorkoutExercise.exercise_id == Exercise.exercise_id)
-        .filter(Workout.plan_id == plan_id)
-        .all()
-    )
+    workouts = Workout.query.filter(Workout.plan_id == plan_id).all()
     if not plan:
         return "Plan not found"
     return render_template("viewPlan.html", plan=plan, workouts=workouts)
