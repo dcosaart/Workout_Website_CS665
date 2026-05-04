@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Add Plan</title>
+</head>
+<body>
+
+    <h1>Create a New Plan</h1>
+
+    <form action="{{ url_for('main.add_plan') }}" method="POST">
+
+        <label for="name">Plan Name:</label><br>
+        <input type="text" id="name" name="name" required><br><br>
+
+        <label for="goal">Goal:</label><br>
+        <input type="text" id="goal" name="goal" required><br><br>
+
+        <label for="user_id">Select User:</label><br>
+        <select id="user_id" name="user_id" required>
+            <option value="" disabled selected>-- Select a User --</option>
+
+            {% for user in users %}
+            <option value="{{ user.user_id }}">
+                {{ user.name }}
+            </option>
+            {% endfor %}
+        </select>
+
+   
+        <button type="submit">Create Plan</button>
+
+    </form>
+
+</body>
+</html>

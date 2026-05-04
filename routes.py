@@ -30,7 +30,19 @@ def get_users():
 
 @main.route("/plans", methods=["GET"])
 def get_plans():
-    plans = Plan.query.all()
+    plans_query = db.session.query(Plan, User).join(User, Plan.user_id == User.user_id).all()
+
+    plans = []
+
+    for plan, user in plans_query:
+        plans.append({
+            "plan_id": plan.plan_id,
+            "user_id": user.user_id,
+            "user_name": user.name,
+            "name": plan.name,
+            "goal": plan.goal
+        })
+
     return render_template("plans.html", plans=plans)
 
 
@@ -38,3 +50,32 @@ def get_plans():
 def get_workouts():
     workouts = Workout.query.all()
     return render_template("workouts.html", workouts=workouts)
+
+@main.route("/plans/viewplan/<int:plan_id>", methods=["GET"])
+def view_plan(plan_id):
+    plan = Plan.query.get(plan_id)
+    if not plan:
+        return "Plan not found"
+    return render_template("viewPlan.html", plan=plan)
+
+@main.route("/plans/add", methods=["GET", "POST"])
+def add_plan():
+    if request.method == "POST":
+        name = request.form["name"]
+        goal = request.form["goal"]
+     
+        user_id = request.form["user_id"]
+        
+     
+
+        if not name or not goal or not user_id:
+            return "Invalid input ..."
+
+        new_plan = Plan(name=name, goal=goal, user_id=user_id)
+        db.session.add(new_plan)
+        db.session.commit()
+
+        return redirect("/plans")
+
+    users = User.query.all()
+    return render_template("create/addPlan.html", users=users)

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plans</title>
+</head>
+<body>
+    <h1>All Plans</h1>
+
+    {% if plan%}
+    <table border="1" cellpadding="8" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Plan ID</th>
+                <th>User ID</th>
+                <th>Name</th>
+                <th>Goal</th>
+                <th>Description</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ plan.plan_id }}</td>
+                <td>{{ plan.user_id }}</td>
+                <td>{{ plan.name }}</td>
+                <td>{{ plan.goal }}</td>
+                <td>{{ plan.description or 'No desc.'}}</td>
+                <td> {{ plan.start_date or 'No Start Date' }}</td>
+                <td> {{ plan.end_date or 'No End Date' }}</td>
+            </tr>
+        </tbody>
+    </table>
+    {% else %}
+    <p>Plan Cannot be Found</p>
+    {% endif %}
+</body>
+</html>

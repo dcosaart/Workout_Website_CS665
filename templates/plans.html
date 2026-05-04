@@ -6,38 +6,31 @@
     <title>Plans</title>
 </head>
 <body>
+    <script>
+        function viewPlan(id) {
+            window.location.href = `/plans/viewplan/${id}`;
+        }
+        function addPlan() {
+            window.location.href = `/plans/add`;
+        }
+    </script>
     <h1>All Plans</h1>
 
     {% if plans %}
-    <table border="1" cellpadding="8" cellspacing="0">
-        <thead>
-            <tr>
-                <th>Plan ID</th>
-                <th>User ID</th>
-                <th>Name</th>
-                <th>Goal</th>
-                <th>Description</th>
-                <th>Start Date</th>
-                <th>End Date</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for plan in plans %}
-            <tr>
-                <td>{{ plan.plan_id }}</td>
-                <td>{{ plan.user_id }}</td>
-                <td>{{ plan.name }}</td>
-                <td>{{ plan.goal }}</td>
-                <td>{{ plan.description or 'No desc.'}}</td>
-                <td>  {{ plan.start_date or 'No Start Date' }}</td>
-                <td>  {{ plan.end_date or 'No End Date' }}</td>
 
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+
+    {% for plan in plans %}
+    <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
+        <h2>{{plan.user_name}}'s {{ plan.name }} Plan</h2>
+        <p><strong>Goal:</strong> {{ plan.goal }}</p>
+        <button onclick="viewPlan('{{plan.plan_id}}')">View Plan</button>
+    </div>
+    {% endfor %}
+
     {% else %}
     <p>No plans found in the database</p>
     {% endif %}
+
+    <button onclick="addPlan()">Add plan</button>
 </body>
 </html>
