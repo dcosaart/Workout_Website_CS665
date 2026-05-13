@@ -31,21 +31,71 @@ def index():
 
 @main.route("/add", methods=["POST"])
 def add_user():
-    name = request.form["name"]
+    name = request.form.get("name", "").strip()
+    first_name = request.form.get("first_name", "").strip()
+    last_name = request.form.get("last_name", "").strip()
+    email = request.form.get("email", "").strip()
 
-    if not name:
-        return "Invalid input"
+    if name and not first_name and not last_name:
+        new_user = User(name=name, email=email or None)
+    else:
+        if not first_name or not last_name:
+            return "Invalid input"
+        new_user = User(first_name=first_name, last_name=last_name, email=email or None)
 
-    new_user = User(name=name)
     db.session.add(new_user)
     db.session.commit()
 
-    return redirect("/")
+    return redirect("/users")
+
+
+@main.route("/users/add", methods=["POST"])
+def add_user_from_users_page():
+    first_name = request.form.get("first_name", "").strip()
+    last_name = request.form.get("last_name", "").strip()
+    email = request.form.get("email", "").strip()
+
+    if not first_name or not last_name:
+        return "Invalid input"
+
+    new_user = User(first_name=first_name, last_name=last_name, email=email or None)
+    db.session.add(new_user)
+    db.session.commit()
+
+    return redirect("/users")
 
 @main.route("/users", methods=["GET"])
 def get_users():
     users = User.query.all()
     return render_template("users.html", users=users)
+
+
+@main.route("/users/edit/<int:user_id>", methods=["POST"])
+def edit_user(user_id):
+    user = User.query.get_or_404(user_id)
+    first_name = request.form.get("first_name", "").strip()
+    last_name = request.form.get("last_name", "").strip()
+    email = request.form.get("email", "").strip()
+
+    if not first_name or not last_name:
+        return "Invalid input"
+
+    user.first_name = first_name
+    user.last_name = last_name
+    user.email = email or None
+    db.session.commit()
+
+    return redirect("/users")
+
+
+@main.route("/users/delete/<int:user_id>", methods=["POST"])
+def delete_user(user_id):
+    user = User.query.get_or_404(user_id)
+
+    db.session.delete(user)
+    db.session.commit()
+
+    return redirect("/users")
 
 @main.route("/plans", methods=["GET"])
 def get_plans():
