@@ -27,10 +27,10 @@
                     <td>{{ plan.plan_id }}</td>
                     <td>{{ plan.user_id }}</td>
                     <td><input value="{{ plan.name }}" name="name" /></td>
-                    <td><input value=" {{ plan.goal }}" name="goal" /></td>
-                    <td><input value="{{ plan.description or 'No desc.'}}" name="description" /></td>
-                    <td><input value="{{ plan.start_date or 'No Start Date' }}" name="start_date" /></td>
-                    <td><input value="{{ plan.end_date or 'No End Date' }}" name="end_date" /></td>
+                    <td><input value="{{ plan.goal or '' }}" name="goal" /></td>
+                    <td><input value="{{ plan.description or '' }}" name="description" /></td>
+                    <td><input type="date" value="{{ plan.start_date or '' }}" name="start_date" /></td>
+                    <td><input type="date" value="{{ plan.end_date or '' }}" name="end_date" /></td>
                 </tr>
             </tbody>
         </table>
@@ -38,40 +38,117 @@
     </form>
     <h2>Workouts for this Plan</h2>
     {% if workouts %}
-        {% for w in workouts %}
-        <div style="margin-left: 30px; margin-top: 12px; padding-left: 12px; border-left: 3px solid #bbb;">
-            <h3>Workout {{ w.workout_id }}</h3>
-            <p><strong>User ID:</strong> {{ w.user_id }}</p>
-            <p><strong>Plan ID:</strong> {{ w.plan_id }}</p>
-            <p><strong>Workout Date:</strong> {{ w.workout_date or 'No Date' }}</p>
-            <p><strong>Duration:</strong> {{ w.duration_min or 0 }} minutes</p>
-            <p><strong>Calories:</strong> {{ w.cals_burned or 0 }}</p>
-            <p><strong>Notes:</strong> {{ w.notes or 'No notes' }}</p>
+    {% for w in workouts %}
+    <table border="1" cellpadding="8" cellspacing="0">
+        <thead>
+            <tr>
+                <th>Workout Date</th>
+                <th>Duration</th>
+                <th>Calories</th>
+                <th>Notes</th>
+        
+            </tr>
+        </thead>
+        <tbody>
 
-            {% if w.workout_exercises %}
+            <tr>
+                <td>{{ w.workout_date or 'No Date' }}</td>
+                <td>{{ w.duration_min or 0 }} minutes</td>
+                <td>{{ w.cals_burned or 0 }}</td>
+                <td>{{ w.notes or 'No notes' }}</td>
+
+            </tr>
+
+        </tbody>
+
+    </table>
+    <div style="margin-left: 45px; margin-top: 12px; padding-left: 18px; border-left: 4px solid #999;">
+        {% if w.workout_exercises %}
+        <h4>Exercises for Workout on {{ w.workout_date }}</h4>
+        <table border="1" cellpadding="6" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Muscle Group</th>
+                    <th>Difficulty</th>
+                    <th>Equipment</th>
+                    <th>Sets</th>
+                    <th>Reps</th>
+                    <th>Average Weight</th>
+                </tr>
+            </thead>
+            <tbody>
                 {% for workout_exercise in w.workout_exercises %}
-                <div style="margin-left: 30px; margin-top: 10px; padding-left: 12px; border-left: 3px solid #ddd;">
-                    <h4>{{ workout_exercise.exercise.name }}</h4>
-                    <p><strong>Exercise ID:</strong> {{ workout_exercise.exercise.exercise_id }}</p>
-                    <p><strong>Muscle Group:</strong> {{ workout_exercise.exercise.muscle_group or 'Not listed' }}</p>
-                    <p><strong>Difficulty:</strong> {{ workout_exercise.exercise.difficulty }}</p>
-                    <p><strong>Equipment:</strong> {{ workout_exercise.exercise.equipment_needed or 'None' }}</p>
-                    <p><strong>Sets:</strong> {{ workout_exercise.sets_completed or 'N/A' }}</p>
-                    <p><strong>Reps:</strong> {{ workout_exercise.reps_completed or 'N/A' }}</p>
-                    <p><strong>Average Weight:</strong> {{ workout_exercise.average_weight or 'N/A' }}</p>
-                </div>
+                <tr>
+                    <td>{{ workout_exercise.exercise.name }}</td>
+                    <td>{{ workout_exercise.exercise.muscle_group or 'Not listed' }}</td>
+                    <td>{{ workout_exercise.exercise.difficulty }}</td>
+                    <td>{{ workout_exercise.exercise.equipment_needed or 'None' }}</td>
+                    <td>{{ workout_exercise.sets_completed or 'N/A' }}</td>
+                    <td>{{ workout_exercise.reps_completed or 'N/A' }}</td>
+                    <td>{{ workout_exercise.average_weight or 'N/A' }}</td>
+                </tr>
                 {% endfor %}
-            {% else %}
-                <p style="margin-left: 30px;">No exercises found for this workout.</p>
-            {% endif %}
-        </div>
-            {% endfor %}
-
-
-
+            </tbody>
+        </table>
+        {% else %}
+        No exercises found for this workout.
+        {% endif %}
+        <form action="{{ url_for('main.add_exercise_to_workout', plan_id=plan.plan_id, workout_id=w.workout_id) }}" method="POST">
+            <h4>Add Exercise</h4>
+            <table border="1" cellpadding="6" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Muscle Group</th>
+                        <th>Difficulty</th>
+                        <th>Equipment</th>
+                        <th>Sets</th>
+                        <th>Reps</th>
+                        <th>Average Weight</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input name="name" required /></td>
+                        <td><input name="muscle_group" /></td>
+                        <td><input type="number" name="difficulty" min="1" max="5" value="1" /></td>
+                        <td><input name="equipment_needed" /></td>
+                        <td><input type="number" name="sets_completed" min="0" step="0.5" /></td>
+                        <td><input type="number" name="reps_completed" min="0" step="0.5" /></td>
+                        <td><input type="number" name="average_weight" min="0" step="0.5" /></td>
+                    </tr>
+                </tbody>
+            </table>
+            <button type="submit">Add Exercise</button>
+        </form>
+    </div>
+    {% endfor %}
     {% else %}
     <p>No workouts found for this plan</p>
     {% endif %}
+    <form action="{{ url_for('main.add_workout_to_plan', plan_id=plan.plan_id) }}" method="POST">
+        <h3>Add Workout</h3>
+        <table border="1" cellpadding="8" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Workout Date</th>
+                    <th>Duration</th>
+                    <th>Calories</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><input type="date" name="workout_date" /></td>
+                    <td><input type="number" name="duration_min" min="0" /> minutes</td>
+                    <td><input type="number" name="cals_burned" min="0" /></td>
+                    <td><input name="notes" /></td>
+                </tr>
+            </tbody>
+        </table>
+        <button type="submit">Add Workout</button>
+    </form>
     {% else %}
     <p>Plan Cannot be Found</p>
     {% endif %}

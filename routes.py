@@ -1,10 +1,28 @@
-from flask import Blueprint, render_template, request, redirect
+from flask import Blueprint, render_template, request, redirect, url_for
 from models import Exercise, WorkoutExercise, db, User, Plan, Workout
 from datetime import datetime
 
 main = Blueprint("main", __name__)
 
 print("ROUTES LOADED")
+
+
+def parse_optional_date(raw_date):
+    if not raw_date:
+        return None
+    return datetime.strptime(raw_date, "%Y-%m-%d").date()
+
+
+def parse_optional_int(raw_number):
+    if not raw_number:
+        return None
+    return int(raw_number)
+
+
+def parse_optional_float(raw_number):
+    if not raw_number:
+        return None
+    return float(raw_number)
 
 @main.route("/")
 def index():
@@ -73,14 +91,8 @@ def view_plan(plan_id):
         plan.description = description
         
 
-        start_date = None
-        end_date = None
-
-        if start_date_raw and start_date_raw!= 'No Start Date':
-            start_date = datetime.strptime(start_date_raw, "%Y-%m-%d").date()
-
-        if end_date_raw and end_date_raw != "No End Date":
-            end_date = datetime.strptime(end_date_raw, "%Y-%m-%d").date()
+        plan.start_date = parse_optional_date(start_date_raw)
+        plan.end_date = parse_optional_date(end_date_raw)
 
 
         db.session.commit()
@@ -91,6 +103,57 @@ def view_plan(plan_id):
     if not plan:
         return "Plan not found"
     return render_template("viewPlan.html", plan=plan, workouts=workouts)
+
+
+@main.route("/plans/viewplan/<int:plan_id>/workouts/add", methods=["POST"])
+def add_workout_to_plan(plan_id):
+    plan = Plan.query.get_or_404(plan_id)
+
+    new_workout = Workout(
+        user_id=plan.user_id,
+        plan_id=plan.plan_id,
+        workout_date=parse_optional_date(request.form.get("workout_date")),
+        duration_min=parse_optional_int(request.form.get("duration_min")),
+        cals_burned=parse_optional_int(request.form.get("cals_burned")),
+        notes=request.form.get("notes") or None,
+    )
+    db.session.add(new_workout)
+    db.session.commit()
+
+    return redirect(url_for("main.view_plan", plan_id=plan.plan_id))
+
+
+@main.route(
+    "/plans/viewplan/<int:plan_id>/workouts/<int:workout_id>/exercises/add",
+    methods=["POST"],
+)
+def add_exercise_to_workout(plan_id, workout_id):
+    workout = Workout.query.filter_by(workout_id=workout_id, plan_id=plan_id).first_or_404()
+    exercise_name = request.form.get("name", "").strip()
+
+    if not exercise_name:
+        return "Exercise name is required"
+
+    exercise = Exercise(
+        name=exercise_name,
+        muscle_group=request.form.get("muscle_group") or None,
+        difficulty=parse_optional_int(request.form.get("difficulty")) or 1,
+        equipment_needed=request.form.get("equipment_needed") or None,
+    )
+    db.session.add(exercise)
+    db.session.flush()
+
+    workout_exercise = WorkoutExercise(
+        workout_id=workout.workout_id,
+        exercise_id=exercise.exercise_id,
+        sets_completed=parse_optional_float(request.form.get("sets_completed")),
+        reps_completed=parse_optional_float(request.form.get("reps_completed")),
+        average_weight=parse_optional_float(request.form.get("average_weight")),
+    )
+    db.session.add(workout_exercise)
+    db.session.commit()
+
+    return redirect(url_for("main.view_plan", plan_id=plan_id))
 
 
 @main.route("/plans/add", methods=["GET", "POST"])
