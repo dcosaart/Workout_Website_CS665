@@ -2,8 +2,13 @@
 <html>
 <head>
     <title>Add Plan</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+    <div class="page-nav">
+        <a class="nav-button" href="{{ url_for('main.get_plans') }}">Back to Plans</a>
+        <a class="nav-button" href="{{ url_for('main.index') }}">Back to Home</a>
+    </div>
 
     <h1>Create a New Plan</h1>
 

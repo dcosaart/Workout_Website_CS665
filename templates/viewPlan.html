@@ -4,8 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plans</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+    <div class="page-nav">
+        <a class="nav-button" href="{{ url_for('main.get_plans') }}">Back to Plans</a>
+        <a class="nav-button" href="{{ url_for('main.index') }}">Back to Home</a>
+    </div>
     <h1>Plan</h1>
 
     {% if plan%}
@@ -62,7 +67,7 @@
         </tbody>
 
     </table>
-    <div style="margin-left: 45px; margin-top: 12px; padding-left: 18px; border-left: 4px solid #999;">
+    <div class="indented-section">
         {% if w.workout_exercises %}
         <h4>Exercises for Workout on {{ w.workout_date }}</h4>
         <table border="1" cellpadding="6" cellspacing="0">

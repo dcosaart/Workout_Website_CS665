@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Plans</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <script>
@@ -14,13 +15,16 @@
             window.location.href = `/plans/add`;
         }
     </script>
+    <div class="page-nav">
+        <a class="nav-button" href="{{ url_for('main.index') }}">Back to Home</a>
+    </div>
     <h1>All Plans</h1>
 
     {% if plans %}
 
 
     {% for plan in plans %}
-    <div style="border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;">
+    <div class="card plan-card">
         <h2>{{plan.user_name}}'s {{ plan.name }} Plan</h2>
         <p><strong>Goal:</strong> {{ plan.goal }}</p>
         <button onclick="viewPlan('{{plan.plan_id}}')">View Plan</button>

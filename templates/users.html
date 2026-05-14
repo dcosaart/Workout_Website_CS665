@@ -4,8 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Users</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
+    <div class="page-nav">
+        <a class="nav-button" href="{{ url_for('main.index') }}">Back to Home</a>
+    </div>
     <h1>All Users</h1>
 
     {% if users %}
